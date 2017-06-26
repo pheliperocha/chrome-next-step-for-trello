@@ -20,7 +20,7 @@ const getFirstResult = (fct) => function() {
 
 // trello checklist processors
 
-const prefixChecklistName = (item) => 
+const prefixChecklistName = (item) =>
   Object.assign(item, {
     name: item.checklistName + ': ' + item.name
   });
@@ -166,7 +166,7 @@ function initToolbarSelector(btn) {
           node.hide();
         });
     }, 1);
-    node.style = 'top: 84px; left: ' + (btn.offsetLeft + btn.parentNode.offsetLeft) + 'px;';
+    node.style = 'top: ' + (btn.getBoundingClientRect().top + btn.offsetHeight + 6) + 'px; left: ' + btn.getBoundingClientRect().left + 'px;';
     node.classList.add('is-shown');
   };
   node.toggle = function(evt) {
@@ -233,7 +233,7 @@ function setCardContent(cardTitleElement, items) {
 function updateCardElements(cardElements) {
   // cardElements must be an array of a.list-card-title elements (with a href)
   refreshing = true;
-  document.getElementById('aj-nextstep-mode').innerHTML = MODES[currentMode].label; 
+  document.getElementById('aj-nextstep-mode').innerHTML = MODES[currentMode].label;
   document.getElementById('aj-nextstep-loading').style.display = 'inline-block';
   var handler = (cardElement) => cardElement.href && MODES[currentMode].handler(cardElement);
   var promises = Array.prototype.map.call(cardElements, handler);
@@ -256,7 +256,7 @@ const fetchStepsThen = (cardElement, handler) => fetch(cardElement.href + '.json
   .then((res) => res.json())
   .then((json) => {
     setCardContent(cardElement, handler(json.checklists));
-  }); 
+  });
 
 // extension modes
 
@@ -321,7 +321,7 @@ MENU_ITEMS = [
 
 // extension initialization
 
-const isToolbarInstalled = () => document.getElementById('aj-nextstep-mode'); 
+const isToolbarInstalled = () => document.getElementById('aj-nextstep-mode');
 
 function installToolbar() {
   var headerElements = document.getElementsByClassName('board-header-btns');
@@ -512,6 +512,21 @@ function injectCss() {
   body.aj-nextstep-display-ant3 .aj-nextstep-ant3-menuitem {
     background-color: rgba(255, 0, 0, 0.1);
   }
+
+  .tabbed-pane-main-col-wrapper #aj-nextstep-btn {
+    color: #8c8c8c;
+    font-size: 14px;
+    height: auto;
+  }
+
+  .tabbed-pane-main-col-wrapper #aj-nextstep-btn:hover {
+    background: #D6DADC;
+    color: #4d4d4d;
+  }
+
+  .tabbed-pane-main-col-wrapper #aj-nextstep-mode {
+    font-weight: 700;
+  }
   `;
   document.head.appendChild(style);
 }
@@ -570,12 +585,12 @@ const INIT_STEPS = [
     });
     // inject code into the page's context (unrestricted)
     var scr = document.createElement('script');
-    scr.textContent = ` 
-      var event = document.createEvent("CustomEvent");  
+    scr.textContent = `
+      var event = document.createEvent("CustomEvent");
       event.initCustomEvent("MyCustomEvent", true, true, {"passback": token});
       window.dispatchEvent(event);`;
     // (appending text to a function to convert it's src to string only works in Chrome)
-    // add to document to make it run, then hide it 
+    // add to document to make it run, then hide it
     (document.head || document.documentElement).appendChild(scr);
     scr.parentNode.removeChild(scr);
   },
